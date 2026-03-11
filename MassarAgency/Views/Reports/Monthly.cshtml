@@ -1,0 +1,159 @@
+@model MonthlyReportDto
+@{
+    ViewData["Title"] = "Monthly Report";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">Monthly Attendance & Deduction Report</h4>
+        <p class="text-muted mb-0 small">View attendance statistics and salary deductions</p>
+    </div>
+</div>
+
+<!-- Month/Year Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Monthly" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold">Month</label>
+                <select name="month" class="form-select">
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        <option value="@m" selected="@(Model != null && m == Model.Month)">
+                            @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold">Year</label>
+                <select name="year" class="form-select">
+                    @for (int y = DateTime.Today.Year; y >= DateTime.Today.Year - 3; y--)
+                    {
+                        <option value="@y" selected="@(Model != null && y == Model.Year)">@y</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-burgundy">
+                    <i class="bi bi-funnel me-1"></i> Generate Report
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model != null)
+{
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-2 col-md-4">
+            <div class="stat-card text-center">
+                <h4 class="mb-0">@Model.TotalEmployees</h4>
+                <small class="text-muted">Employees</small>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <div class="stat-card text-center">
+                <h4 class="text-success mb-0">@Model.TotalPresent</h4>
+                <small class="text-muted">Present Days</small>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <div class="stat-card text-center">
+                <h4 class="text-danger mb-0">@Model.TotalAbsent</h4>
+                <small class="text-muted">Absent Days</small>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <div class="stat-card text-center">
+                <h4 class="text-warning mb-0">@Model.TotalLate</h4>
+                <small class="text-muted">Late Days</small>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <div class="stat-card text-center">
+                <h4 class="text-info mb-0">@Model.TotalExcused</h4>
+                <small class="text-muted">Excused Days</small>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4">
+            <div class="stat-card text-center">
+                <h4 class="text-burgundy mb-0">@Model.TotalDeductions.ToString("N2")</h4>
+                <small class="text-muted">Total Deductions (EGP)</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deduction Table -->
+    <div class="card">
+        <div class="card-header bg-burgundy text-white">
+            <i class="bi bi-file-earmark-bar-graph me-2"></i> @Model.MonthName @Model.Year — Employee Deduction Summary
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-masar table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th class="text-end">Base Salary</th>
+                            <th class="text-center">Absence Days</th>
+                            <th class="text-end">Absence Deduction/Day</th>
+                            <th class="text-end">Total Deduction</th>
+                            <th class="text-end">Net Salary</th>
+                            <th class="text-center">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var emp in Model.EmployeeDeductions)
+                        {
+                            <tr>
+                                <td><strong>@emp.EmployeeName</strong></td>
+                                <td><span class="badge bg-light text-dark border">@emp.DepartmentName</span></td>
+                                <td class="text-end">@emp.BaseSalary.ToString("N2")</td>
+                                <td class="text-center">
+                                    @if (emp.AbsenceDays > 0)
+                                    {
+                                        <span class="badge bg-danger">@emp.AbsenceDays</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">0</span>
+                                    }
+                                </td>
+                                <td class="text-end">@emp.DeductionPerAbsenceDay.ToString("N2")</td>
+                                <td class="text-end">
+                                    @if (emp.TotalDeduction > 0)
+                                    {
+                                        <span class="text-danger fw-semibold">-@emp.TotalDeduction.ToString("N2")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-success">0.00</span>
+                                    }
+                                </td>
+                                <td class="text-end fw-semibold">@emp.NetSalary.ToString("N2")</td>
+                                <td class="text-center">
+                                    <a asp-action="EmployeeDeduction" asp-route-id="@emp.EmployeeId"
+                                       asp-route-month="@Model.Month" asp-route-year="@Model.Year"
+                                       class="btn btn-sm btn-outline-burgundy">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr class="fw-bold">
+                            <td colspan="5" class="text-end">Totals:</td>
+                            <td class="text-end text-danger">-@Model.TotalDeductions.ToString("N2") EGP</td>
+                            <td class="text-end">@Model.EmployeeDeductions.Sum(e => e.NetSalary).ToString("N2") EGP</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+}

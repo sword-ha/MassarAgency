@@ -1,0 +1,149 @@
+@model PagedResult<EmployeeDto>
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">Employees</h4>
+        <p class="text-muted mb-0 small">Manage your company employees</p>
+    </div>
+    <a asp-action="Create" class="btn btn-burgundy">
+        <i class="bi bi-plus-lg me-1"></i> Add Employee
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label small fw-semibold">Search</label>
+                <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search by name, email, or job title..." />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-semibold">Department</label>
+                <select name="departmentId" asp-items="@((SelectList)ViewBag.Departments)" class="form-select">
+                    <option value="">All Departments</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-burgundy flex-fill">
+                    <i class="bi bi-search me-1"></i> Filter
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary flex-fill">Clear</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Employees Table -->
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-masar table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Job Title</th>
+                        <th>Base Salary</th>
+                        <th>Hire Date</th>
+                        <th>Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model?.Items?.Any() == true)
+                    {
+                        @foreach (var emp in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <div>
+                                        <strong>@emp.FullName</strong>
+                                        <div class="text-muted small">@emp.Email</div>
+                                    </div>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">@emp.DepartmentName</span></td>
+                                <td>@emp.JobTitle</td>
+                                <td>@emp.BaseSalary.ToString("N2") SAR</td>
+                                <td>@emp.HireDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    @if (emp.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@emp.Id" class="btn btn-outline-secondary" title="View">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-controller="Attendance" asp-action="EmployeeHistory" asp-route-id="@emp.Id" class="btn btn-outline-info" title="Attendance">
+                                            <i class="bi bi-calendar-check"></i>
+                                        </a>
+                                        <form asp-action="Delete" asp-route-id="@emp.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this employee?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="bi bi-people" style="font-size: 2rem;"></i>
+                                <p class="mt-2">No employees found.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model != null && Model.TotalPages > 1)
+    {
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <span class="text-muted small">Showing page @Model.Page of @Model.TotalPages (@Model.TotalCount total)</span>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    @if (Model.HasPrevious)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(Model.Page - 1)"
+                               asp-route-search="@ViewBag.Search" asp-route-departmentId="@ViewBag.DepartmentId">&laquo;</a>
+                        </li>
+                    }
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@i"
+                               asp-route-search="@ViewBag.Search" asp-route-departmentId="@ViewBag.DepartmentId">@i</a>
+                        </li>
+                    }
+                    @if (Model.HasNext)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(Model.Page + 1)"
+                               asp-route-search="@ViewBag.Search" asp-route-departmentId="@ViewBag.DepartmentId">&raquo;</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>

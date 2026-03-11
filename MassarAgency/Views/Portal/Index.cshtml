@@ -1,0 +1,170 @@
+@model EmployeePortalDashboardDto
+@{
+    ViewData["Title"] = "My Dashboard";
+    Layout = "_EmployeeLayout";
+}
+
+@if (Model != null)
+{
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">Welcome, @Model.Employee.FullName</h4>
+            <p class="text-muted mb-0 small">
+                @Model.Employee.JobTitle — @Model.Employee.DepartmentName |
+                @Model.MonthName @Model.CurrentYear
+            </p>
+        </div>
+        <form method="get" asp-action="Index" class="d-flex gap-2 align-items-end">
+            <select name="month" class="form-select form-select-sm" style="width: auto;">
+                @for (int m = 1; m <= 12; m++)
+                {
+                    <option value="@m" selected="@(m == Model.CurrentMonth)">
+                        @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+                    </option>
+                }
+            </select>
+            <select name="year" class="form-select form-select-sm" style="width: auto;">
+                @for (int y = DateTime.Today.Year; y >= DateTime.Today.Year - 3; y--)
+                {
+                    <option value="@y" selected="@(y == Model.CurrentYear)">@y</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-sm btn-burgundy">
+                <i class="bi bi-funnel"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card text-center">
+                <i class="bi bi-check-circle text-success" style="font-size: 1.5rem;"></i>
+                <h3 class="mt-2 mb-0 text-success">@Model.PresentDaysThisMonth</h3>
+                <small class="text-muted">Present Days</small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card text-center">
+                <i class="bi bi-x-circle text-danger" style="font-size: 1.5rem;"></i>
+                <h3 class="mt-2 mb-0 text-danger">@Model.AbsenceDaysThisMonth</h3>
+                <small class="text-muted">Absent Days</small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card text-center">
+                <i class="bi bi-clock text-warning" style="font-size: 1.5rem;"></i>
+                <h3 class="mt-2 mb-0 text-warning">@Model.LateDaysThisMonth</h3>
+                <small class="text-muted">Late Days</small>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="stat-card text-center">
+                <i class="bi bi-shield-check text-info" style="font-size: 1.5rem;"></i>
+                <h3 class="mt-2 mb-0 text-info">@Model.ExcusedDaysThisMonth</h3>
+                <small class="text-muted">Excused Days</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Salary Summary -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="stat-card">
+                <small class="text-muted d-block mb-1">Base Salary</small>
+                <h4 class="mb-0">@Model.Employee.BaseSalary.ToString("N2") <small class="text-muted">EGP</small></h4>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="stat-card">
+                <small class="text-muted d-block mb-1">Deductions This Month</small>
+                <h4 class="mb-0 text-danger">-@Model.DeductionThisMonth.ToString("N2") <small class="text-muted">EGP</small></h4>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0" style="background: linear-gradient(135deg, #800020, #a3324d); border-radius: 12px;">
+                <div class="card-body text-white text-center py-3">
+                    <small class="d-block opacity-75">Net Salary</small>
+                    <h3 class="mb-0 fw-bold">@Model.NetSalaryThisMonth.ToString("N2") EGP</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance History -->
+    <div class="card">
+        <div class="card-header bg-burgundy text-white">
+            <i class="bi bi-calendar-check me-2"></i> Attendance — @Model.MonthName @Model.CurrentYear
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecentAttendance.Any())
+                        {
+                            @foreach (var att in Model.RecentAttendance)
+                            {
+                                <tr>
+                                    <td>@att.Date.ToString("ddd, MMM dd")</td>
+                                    <td>
+                                        @switch (att.Status)
+                                        {
+                                            case AttendanceStatus.Present:
+                                                <span class="badge bg-success">Present</span>
+                                                break;
+                                            case AttendanceStatus.Absent:
+                                                <span class="badge bg-danger">Absent</span>
+                                                break;
+                                            case AttendanceStatus.Late:
+                                                <span class="badge bg-warning text-dark">Late</span>
+                                                break;
+                                            case AttendanceStatus.Excused:
+                                                <span class="badge bg-info">Excused</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="text-muted small">@(att.Notes ?? "—")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-3">No attendance records for this month.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- All-Time Stats -->
+    <div class="row g-3 mt-3">
+        <div class="col-md-6">
+            <div class="stat-card">
+                <small class="text-muted d-block">Total Absence Days (All Time)</small>
+                <h5 class="mb-0 text-danger">@Model.TotalAbsenceDaysAllTime days</h5>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="stat-card">
+                <small class="text-muted d-block">Total Late Days (All Time)</small>
+                <h5 class="mb-0 text-warning">@Model.TotalLateDaysAllTime days</h5>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning text-center">
+        <i class="bi bi-exclamation-triangle me-2"></i> Unable to load your dashboard data.
+    </div>
+}

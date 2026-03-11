@@ -1,0 +1,112 @@
+@model DeductionSummaryDto
+@{
+    ViewData["Title"] = "Employee Deduction Details";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center mb-4">
+            <a asp-action="Monthly" asp-route-month="@Model.Month" asp-route-year="@Model.Year" class="btn btn-outline-secondary me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h4 class="mb-0">Deduction Details</h4>
+                <p class="text-muted mb-0 small">
+                    @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Model.Month) @Model.Year
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-burgundy text-white">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-white text-burgundy d-flex align-items-center justify-content-center"
+                         style="width: 45px; height: 45px; font-size: 1.1rem; font-weight: 700;">
+                        @Model.EmployeeName[0]
+                    </div>
+                    <div>
+                        <h5 class="mb-0">@Model.EmployeeName</h5>
+                        <small class="opacity-75">@Model.DepartmentName</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Base Salary</small>
+                            <h4 class="mb-0">@Model.BaseSalary.ToString("N2") <small class="text-muted">EGP</small></h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Absence Days</small>
+                            <h4 class="mb-0 @(Model.AbsenceDays > 0 ? "text-danger" : "text-success")">
+                                @Model.AbsenceDays <small class="text-muted">days</small>
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Deduction per Absence Day</small>
+                            <h4 class="mb-0">@Model.DeductionPerAbsenceDay.ToString("N2") <small class="text-muted">EGP</small></h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Absence Deduction</small>
+                            <h4 class="mb-0 text-danger">-@Model.AbsenceDeduction.ToString("N2") <small class="text-muted">EGP</small></h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Late Days</small>
+                            <h4 class="mb-0 @(Model.LateDays > 0 ? "text-warning" : "text-success")">
+                                @Model.LateDays <small class="text-muted">days</small>
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Deduction per Late Day</small>
+                            <h4 class="mb-0">@Model.DeductionPerLateDay.ToString("N2") <small class="text-muted">EGP</small></h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Late Deduction</small>
+                            <h4 class="mb-0 text-warning">-@Model.LateDeduction.ToString("N2") <small class="text-muted">EGP</small></h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Total Deduction</small>
+                            <h4 class="mb-0 text-danger">-@Model.TotalDeduction.ToString("N2") <small class="text-muted">EGP</small></h4>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="p-4 rounded text-center" style="background: linear-gradient(135deg, #800020, #a3324d); color: white;">
+                    <small class="d-block opacity-75 mb-1">Net Salary</small>
+                    <h2 class="mb-0 fw-bold">@Model.NetSalary.ToString("N2") EGP</h2>
+                    <small class="opacity-75">
+                        @Model.BaseSalary.ToString("N2") - @Model.TotalDeduction.ToString("N2") = @Model.NetSalary.ToString("N2")
+                    </small>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <a asp-controller="Attendance" asp-action="EmployeeHistory" asp-route-id="@Model.EmployeeId"
+                   asp-route-month="@Model.Month" asp-route-year="@Model.Year"
+                   class="btn btn-outline-info btn-sm">
+                    <i class="bi bi-calendar-check me-1"></i> View Attendance History
+                </a>
+                <a asp-controller="Employees" asp-action="Details" asp-route-id="@Model.EmployeeId"
+                   class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-person me-1"></i> Employee Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

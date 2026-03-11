@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Masar Attendance</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <style>
+        :root {
+            --masar-burgundy: #800020;
+            --masar-burgundy-dark: #5c0017;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8f0f3 0%, #fff 50%, #f8f0f3 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            max-width: 420px;
+            width: 100%;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(128, 0, 32, 0.1);
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--masar-burgundy), var(--masar-burgundy-dark));
+            color: white;
+            border-radius: 16px 16px 0 0;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .btn-burgundy {
+            background-color: var(--masar-burgundy);
+            border-color: var(--masar-burgundy);
+            color: white;
+        }
+
+        .btn-burgundy:hover {
+            background-color: var(--masar-burgundy-dark);
+            border-color: var(--masar-burgundy-dark);
+            color: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--masar-burgundy);
+            box-shadow: 0 0 0 0.2rem rgba(128, 0, 32, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

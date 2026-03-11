@@ -1,0 +1,424 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Masar Attendance</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MassarAgency.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --masar-burgundy: #800020;
+            --masar-burgundy-dark: #5c0017;
+            --masar-burgundy-light: #a3324d;
+            --masar-white: #ffffff;
+            --masar-gray: #f8f9fa;
+            --masar-text: #333333;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--masar-gray);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, var(--masar-burgundy-dark) 0%, var(--masar-burgundy) 100%);
+            color: var(--masar-white);
+            z-index: 1040;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-brand h4 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-brand small {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            display: block;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .sidebar-nav .nav-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.75rem 1.25rem 0.25rem;
+            opacity: 0.5;
+            font-weight: 600;
+        }
+
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.65rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav .nav-link:hover {
+            color: var(--masar-white);
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: rgba(255,255,255,0.4);
+        }
+
+        .sidebar-nav .nav-link.active {
+            color: var(--masar-white);
+            background-color: rgba(255,255,255,0.15);
+            border-left-color: var(--masar-white);
+            font-weight: 600;
+        }
+
+        .sidebar-nav .nav-link i {
+            font-size: 1.1rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: var(--masar-white);
+            border-bottom: 1px solid #e9ecef;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .top-bar .page-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--masar-text);
+            margin: 0;
+        }
+
+        .content-area {
+            padding: 1.5rem;
+        }
+
+        /* Cards */
+        .stat-card {
+            background: var(--masar-white);
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+            border: none;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--masar-text);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin: 0;
+        }
+
+        /* Burgundy themed elements */
+        .btn-burgundy {
+            background-color: var(--masar-burgundy);
+            border-color: var(--masar-burgundy);
+            color: var(--masar-white);
+        }
+
+        .btn-burgundy:hover {
+            background-color: var(--masar-burgundy-dark);
+            border-color: var(--masar-burgundy-dark);
+            color: var(--masar-white);
+        }
+
+        .btn-outline-burgundy {
+            color: var(--masar-burgundy);
+            border-color: var(--masar-burgundy);
+        }
+
+        .btn-outline-burgundy:hover {
+            background-color: var(--masar-burgundy);
+            color: var(--masar-white);
+        }
+
+        .bg-burgundy {
+            background-color: var(--masar-burgundy) !important;
+        }
+
+        .text-burgundy {
+            color: var(--masar-burgundy) !important;
+        }
+
+        .badge-burgundy {
+            background-color: var(--masar-burgundy);
+            color: var(--masar-white);
+        }
+
+        /* Table styling */
+        .table-masar thead {
+            background-color: var(--masar-burgundy);
+            color: var(--masar-white);
+        }
+
+        .table-masar thead th {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            padding: 0.85rem 1rem;
+        }
+
+        .table-masar tbody td {
+            padding: 0.75rem 1rem;
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        /* Toast notifications */
+        .alert-float {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @@keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Sidebar toggle for mobile */
+        .sidebar-toggle {
+            display: none;
+        }
+
+        @@media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar-toggle {
+                display: inline-flex;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 1035;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
+        /* Pagination */
+        .page-link {
+            color: var(--masar-burgundy);
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--masar-burgundy);
+            border-color: var(--masar-burgundy);
+        }
+
+        .page-link:hover {
+            color: var(--masar-burgundy-dark);
+        }
+
+        /* Form focus */
+        .form-control:focus, .form-select:focus {
+            border-color: var(--masar-burgundy-light);
+            box-shadow: 0 0 0 0.2rem rgba(128, 0, 32, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div>
+         @*     <i class="bi bi-building" style="font-size:1.75rem;"></i> *@
+                <img style="width:100px" src="~/images/removed backg massar.png" />
+            </div>
+            <div>
+                <h4>Masar</h4>
+                <small>Employee Attendance System</small>
+            </div>
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-label">Main</div>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+               asp-controller="Dashboard" asp-action="Index">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+
+            <div class="nav-label">Management</div>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employees" ? "active" : "")"
+               asp-controller="Employees" asp-action="Index">
+                <i class="bi bi-people"></i> Employees
+            </a>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Departments" ? "active" : "")"
+               asp-controller="Departments" asp-action="Index">
+                <i class="bi bi-diagram-3"></i> Departments
+            </a>
+
+            <div class="nav-label">Tracking</div>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Attendance" ? "active" : "")"
+               asp-controller="Attendance" asp-action="Index">
+                <i class="bi bi-calendar-check"></i> Attendance
+            </a>
+
+            <div class="nav-label">Reports</div>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")"
+               asp-controller="Reports" asp-action="Monthly">
+                <i class="bi bi-file-earmark-bar-graph"></i> Monthly Report
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-outline-secondary sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h5 class="page-title">@(ViewData["Title"] ?? "Dashboard")</h5>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small"><i class="bi bi-calendar3"></i> @DateTime.Today.ToString("dddd, MMMM dd, yyyy")</span>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="text-muted small"><i class="bi bi-person-circle me-1"></i> @User.Identity.Name</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+
+        <div class="content-area">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show alert-float" role="alert">
+                    <i class="bi bi-check-circle me-2"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show alert-float" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        // Auto-dismiss alerts
+        setTimeout(function() {
+            document.querySelectorAll('.alert-float').forEach(function(el) {
+                var alert = bootstrap.Alert.getOrCreateInstance(el);
+                alert.close();
+            });
+        }, 4000);
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

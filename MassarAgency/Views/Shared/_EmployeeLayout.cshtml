@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Masar Portal</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MassarAgency.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --masar-burgundy: #800020;
+            --masar-burgundy-dark: #5c0017;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .portal-navbar {
+            background: linear-gradient(135deg, var(--masar-burgundy), var(--masar-burgundy-dark));
+        }
+
+        .portal-navbar .navbar-brand,
+        .portal-navbar .nav-link,
+        .portal-navbar .navbar-text {
+            color: white !important;
+        }
+
+        .portal-navbar .nav-link:hover {
+            opacity: 0.85;
+        }
+
+        .portal-navbar .nav-link.active {
+            font-weight: 600;
+            border-bottom: 2px solid white;
+        }
+
+        .portal-content {
+            padding: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: transform 0.15s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .text-burgundy {
+            color: var(--masar-burgundy) !important;
+        }
+
+        .bg-burgundy {
+            background-color: var(--masar-burgundy) !important;
+        }
+
+        .btn-burgundy {
+            background-color: var(--masar-burgundy);
+            border-color: var(--masar-burgundy);
+            color: white;
+        }
+
+        .btn-burgundy:hover {
+            background-color: var(--masar-burgundy-dark);
+            border-color: var(--masar-burgundy-dark);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg portal-navbar">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Portal" asp-action="Index">
+                <img style="width:150px" src="~/images/removed backg massar.png" />
+                <div>
+                    <strong>Masar</strong>
+                    <small class="d-block" style="font-size: 0.7rem; opacity: 0.8;">Employee Portal</small>
+                </div>
+            </a>
+            <button class="navbar-toggler border-light" type="button" data-bs-toggle="collapse" data-bs-target="#portalNav">
+                <i class="bi bi-list text-white"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="portalNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                           asp-controller="Portal" asp-action="Index">
+                            <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="navbar-text">
+                        <i class="bi bi-person-circle me-1"></i> @User.Identity?.Name
+                    </span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-sm btn-outline-light">
+                            <i class="bi bi-box-arrow-right me-1"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="portal-content">
+        <div class="container">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-2"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

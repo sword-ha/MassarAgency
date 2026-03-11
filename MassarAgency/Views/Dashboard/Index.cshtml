@@ -1,0 +1,202 @@
+@model DashboardDto
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <p class="stat-label">Total Employees</p>
+                    <h3 class="stat-value mb-0">@(Model?.TotalEmployees ?? 0)</h3>
+                </div>
+                <div class="stat-icon bg-burgundy text-white">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <p class="stat-label">Active Employees</p>
+                    <h3 class="stat-value mb-0">@(Model?.ActiveEmployees ?? 0)</h3>
+                </div>
+                <div class="stat-icon" style="background-color: #198754; color: white;">
+                    <i class="bi bi-person-check-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <p class="stat-label">Departments</p>
+                    <h3 class="stat-value mb-0">@(Model?.TotalDepartments ?? 0)</h3>
+                </div>
+                <div class="stat-icon" style="background-color: #0d6efd; color: white;">
+                    <i class="bi bi-diagram-3-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <p class="stat-label">Attendance Rate</p>
+                    <h3 class="stat-value mb-0">@(Model?.AttendanceRate ?? 0)%</h3>
+                </div>
+                <div class="stat-icon" style="background-color: #ffc107; color: white;">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <p class="stat-label">Present Today</p>
+                    <h3 class="stat-value mb-0 text-success">@(Model?.TodayPresent ?? 0)</h3>
+                </div>
+                <div class="stat-icon" style="background-color: #d1e7dd;">
+                    <i class="bi bi-check-circle text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <p class="stat-label">Absent Today</p>
+                    <h3 class="stat-value mb-0 text-danger">@(Model?.TodayAbsent ?? 0)</h3>
+                </div>
+                <div class="stat-icon" style="background-color: #f8d7da;">
+                    <i class="bi bi-x-circle text-danger"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <p class="stat-label">Monthly Deductions (Current)</p>
+                    <h3 class="stat-value mb-0 text-burgundy">@(Model?.MonthlyDeductions.ToString("N2") ?? "0.00") EGP</h3>
+                </div>
+                <div class="stat-icon bg-burgundy text-white">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header bg-burgundy text-white d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-diagram-3 me-2"></i> Departments</span>
+                <a asp-controller="Departments" asp-action="Index" class="btn btn-sm btn-outline-light">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Department</th>
+                                <th class="text-center">Employees</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model?.RecentDepartments?.Any() == true)
+                            {
+                                @foreach (var dept in Model.RecentDepartments)
+                                {
+                                    <tr>
+                                        <td>@dept.Name</td>
+                                        <td class="text-center">
+                                            <span class="badge bg-burgundy rounded-pill">@dept.EmployeeCount</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2" class="text-center text-muted py-3">No departments found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header bg-burgundy text-white d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-clock-history me-2"></i> Recent Attendance</span>
+                <a asp-controller="Attendance" asp-action="Index" class="btn btn-sm btn-outline-light">Record Attendance</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Employee</th>
+                                <th>Department</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model?.RecentAttendance?.Any() == true)
+                            {
+                                @foreach (var att in Model.RecentAttendance)
+                                {
+                                    <tr>
+                                        <td>@att.EmployeeName</td>
+                                        <td>@att.DepartmentName</td>
+                                        <td>@att.Date.ToString("MMM dd")</td>
+                                        <td>
+                                            @switch (att.Status)
+                                            {
+                                                case AttendanceStatus.Present:
+                                                    <span class="badge bg-success">Present</span>
+                                                    break;
+                                                case AttendanceStatus.Absent:
+                                                    <span class="badge bg-danger">Absent</span>
+                                                    break;
+                                                case AttendanceStatus.Late:
+                                                    <span class="badge bg-warning text-dark">Late</span>
+                                                    break;
+                                                case AttendanceStatus.Excused:
+                                                    <span class="badge bg-info">Excused</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-3">No attendance records found.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
