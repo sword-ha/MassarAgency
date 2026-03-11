@@ -225,3 +225,4 @@ C:\Users\eidh7\source\repos\MassarAgency\MassarAgency\obj\Release\net10.0\Massar
 C:\Users\eidh7\source\repos\MassarAgency\MassarAgency\obj\Release\net10.0\MassarAgency.genruntimeconfig.cache
 C:\Users\eidh7\source\repos\MassarAgency\MassarAgency\obj\Release\net10.0\ref\MassarAgency.dll
 C:\Users\eidh7\source\repos\MassarAgency\MassarAgency\bin\Release\net10.0\dotnet-tools.json
+C:\Users\eidh7\source\repos\MassarAgency\MassarAgency\obj\Release\net10.0\MassarAgency.sourcelink.json

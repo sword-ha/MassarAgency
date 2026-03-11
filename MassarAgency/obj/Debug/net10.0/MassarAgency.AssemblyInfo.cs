@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MassarAgency")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ab752691ddfbe3f9346e26534302c1cdab50fa5")]
 [assembly: System.Reflection.AssemblyProductAttribute("MassarAgency")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MassarAgency")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
