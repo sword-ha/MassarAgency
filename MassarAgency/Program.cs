@@ -74,6 +74,9 @@ namespace MassarAgency
                 pattern: "{controller=Dashboard}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
+            // تعيين Port ديناميكي بناءً على Render
+            var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+            app.Urls.Add($"http://*:{port}");
             app.Run();
         }
     }
