@@ -49,9 +49,9 @@ namespace MassarAgency
             var app = builder.Build();
 
             // Auto-migrate only in Development
-            if (app.Environment.IsDevelopment())
+            // Auto-migrate in all environments
+            using (var scope = app.Services.CreateScope())
             {
-                using var scope = app.Services.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<MasarDbContext>();
                 db.Database.Migrate();
             }
