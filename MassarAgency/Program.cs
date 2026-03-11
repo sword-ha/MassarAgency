@@ -5,7 +5,6 @@ using MassarAgency.Infrastructure.Data;
 using MassarAgency.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-
 namespace MassarAgency
 {
     public class Program
@@ -13,18 +12,15 @@ namespace MassarAgency
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             // Database
             builder.Services.AddDbContext<MasarDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
             // Repositories
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
             builder.Services.AddScoped<IDeductionPolicyRepository, DeductionPolicyRepository>();
-
             // Services
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IDepartmentService, DepartmentService>();
@@ -33,7 +29,6 @@ namespace MassarAgency
             builder.Services.AddScoped<IDashboardService, DashboardService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IPortalService, PortalService>();
-
             // Authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -43,40 +38,33 @@ namespace MassarAgency
                     options.AccessDeniedPath = "/Account/Login";
                     options.ExpireTimeSpan = TimeSpan.FromHours(8);
                 });
-
             builder.Services.AddControllersWithViews();
-
             var app = builder.Build();
-
-            // Auto-migrate only in Development
-            // Auto-migrate in all environments
-            using (var scope = app.Services.CreateScope())
+            // Auto-migrate
+            try
             {
+                using var scope = app.Services.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<MasarDbContext>();
                 db.Database.Migrate();
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Migration error: {ex.Message}");
+            }
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Dashboard}/{action=Index}/{id?}")
                 .WithStaticAssets();
-
-            // تعيين Port ديناميكي بناءً على Render
-            var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-            app.Urls.Add($"http://*:{port}");
             app.Run();
         }
     }
